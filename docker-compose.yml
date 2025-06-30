@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # Spring Boot 메인 애플리케이션 (8080 포트)
+  security-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: security-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8080 # Spring Boot 서버 포트
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - KAKAO_API_URL=http://localhost:8081 # KakaoTalk Mock 서버
+      - SMS_API_URL=http://localhost:8082 # SMS Mock 서버
+    restart: unless-stopped
+    depends_on:
+      - kakao-mock
+      - sms-mock
+      - redis
+    networks:
+      - app-network
+    extra_hosts:
+      - "localhost:host-gateway"
+
+  # KakaoTalk Mock Server (포트 8081)
+  kakao-mock:
+    image: wiremock/wiremock:2.35.0
+    container_name: kakao-mock
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./mock-configs/kakao:/home/wiremock
+    command: [ "--port", "8081", "--global-response-templating", "--verbose" ]
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # SMS Mock Server (포트 8082)  
+  sms-mock:
+    image: wiremock/wiremock:2.35.0
+    container_name: sms-mock
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./mock-configs/sms:/home/wiremock
+    command: [ "--port", "8082", "--global-response-templating", "--verbose" ]
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Redis 서버 (포트 6379)
+  redis:
+    image: redis:7-alpine
+    container_name: security-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    command: redis-server --port 6379 --appendonly yes
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  redis-data:

@@ -1,0 +1,88 @@
+{
+  "validUser": {
+    "userId": "testuser",
+    "password": "password123",
+    "name": "홍길동",
+    "residentNumber": "1234567890123",
+    "phoneNumber": "01012345678",
+    "address": "서울특별시 강남구"
+  },
+  "validUser2": {
+    "userId": "testuser2",
+    "password": "password456",
+    "name": "김철수",
+    "residentNumber": "9876543210987",
+    "phoneNumber": "01087654321",
+    "address": "부산광역시 해운대구"
+  },
+  "validUser3": {
+    "userId": "testuser3",
+    "password": "password789",
+    "name": "이영희",
+    "residentNumber": "1111111111111",
+    "phoneNumber": "01011111111",
+    "address": "대구광역시 수성구"
+  },
+  "invalidResidentNumber": {
+    "userId": "testuser4",
+    "password": "password123",
+    "name": "박민수",
+    "residentNumber": "123456789012",
+    "phoneNumber": "01012345678",
+    "address": "인천광역시 연수구"
+  },
+  "invalidPhoneNumber": {
+    "userId": "testuser5",
+    "password": "password123",
+    "name": "최지영",
+    "residentNumber": "1234567890123",
+    "phoneNumber": "0101234567",
+    "address": "광주광역시 서구"
+  },
+  "missingPassword": {
+    "userId": "testuser6",
+    "name": "정수진",
+    "residentNumber": "1234567890123",
+    "phoneNumber": "01012345678",
+    "address": "대전광역시 유성구"
+  },
+  "missingUserId": {
+    "password": "password123",
+    "name": "한미영",
+    "residentNumber": "1234567890123",
+    "phoneNumber": "01012345678",
+    "address": "울산광역시 남구"
+  },
+  "shortPassword": {
+    "userId": "testuser7",
+    "password": "123",
+    "name": "송민호",
+    "residentNumber": "1234567890123",
+    "phoneNumber": "01012345678",
+    "address": "세종특별자치시"
+  },
+  "emptyName": {
+    "userId": "testuser8",
+    "password": "password123",
+    "name": "",
+    "residentNumber": "1234567890123",
+    "phoneNumber": "01012345678",
+    "address": "제주특별자치도 제주시"
+  },
+  "duplicateUserId": {
+    "userId": "testuser",
+    "password": "differentpassword",
+    "name": "중복계정테스트",
+    "residentNumber": "9999999999999",
+    "phoneNumber": "01099999999",
+    "address": "충청북도 청주시"
+  },
+  "duplicateResidentNumber": {
+    "userId": "differentuser",
+    "password": "password123",
+    "name": "중복주민번호테스트",
+    "residentNumber": "1234567890123",
+    "phoneNumber": "01088888888",
+    "address": "충청남도 천안시"
+  }
+}

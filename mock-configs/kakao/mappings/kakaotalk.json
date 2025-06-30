@@ -1,0 +1,22 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/kakaotalk-messages",
+    "headers": {
+      "Authorization": {
+        "equalTo": "Basic YXV0b2V2ZXI6MTIzNA=="
+      },
+      "Content-Type": {
+        "contains": "application/json"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{}"
+  },
+  "priority": 10
+}

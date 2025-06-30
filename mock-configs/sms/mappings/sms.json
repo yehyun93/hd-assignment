@@ -1,0 +1,27 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPattern": "/sms\\?phone=.*",
+    "headers": {
+      "Authorization": {
+        "equalTo": "Basic YXV0b2V2ZXI6NTY3OA=="
+      },
+      "Content-Type": {
+        "contains": "application/x-www-form-urlencoded"
+      }
+    },
+    "bodyPatterns": [
+      {
+        "contains": "message="
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"result\": \"OK\"}"
+  },
+  "priority": 1
+}
