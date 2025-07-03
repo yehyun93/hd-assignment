@@ -5,6 +5,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
@@ -13,6 +16,7 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.Random;
 
+@Slf4j
 @Service
 public class KakaoTalkService {
 
@@ -50,12 +54,20 @@ public class KakaoTalkService {
         .toBodilessEntity()
         .timeout(Duration.ofSeconds(5))
         .map(response -> response.getStatusCode().is2xxSuccessful())
-        .onErrorResume(error -> Mono.just(false));
+        .onErrorResume(WebClientResponseException.class, ex -> {
+          if (ex.getStatusCode().is5xxServerError()) {
+            log.error("카카오톡 API 서버 오류 - 상태코드: {}", ex.getStatusCode().value());
+          } else if (ex.getStatusCode().is4xxClientError()) {
+            log.warn("카카오톡 API 클라이언트 오류 - 상태코드: {}", ex.getStatusCode().value());
+          }
+          return Mono.just(false);
+        })
+        .onErrorResume(Exception.class, error -> {
+          log.error("카카오톡 API 연결 오류: {}", error.getMessage());
+          return Mono.just(false);
+        });
   }
 
-  /**
-   * Basic Auth 헤더를 생성합니다.
-   */
   private String createBasicAuth(String username, String password) {
     String credentials = username + ":" + password;
     String encodedCredentials = Base64.getEncoder()

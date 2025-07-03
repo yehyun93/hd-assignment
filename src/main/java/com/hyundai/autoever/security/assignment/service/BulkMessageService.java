@@ -3,10 +3,15 @@ package com.hyundai.autoever.security.assignment.service;
 import com.hyundai.autoever.security.assignment.domain.dto.request.MessageSendRequestDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.MessageSendResponseDto;
 import com.hyundai.autoever.security.assignment.domain.entity.User;
+import com.hyundai.autoever.security.assignment.enums.AgeGroup;
 import com.hyundai.autoever.security.assignment.repository.UserRepository;
 import com.hyundai.autoever.security.assignment.util.AgeCalculator;
 import com.hyundai.autoever.security.assignment.util.RateLimiter;
+import com.hyundai.autoever.security.assignment.domain.dto.response.ApiResponse;
+import com.hyundai.autoever.security.assignment.enums.ApiResponseCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +22,11 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -37,9 +44,11 @@ public class BulkMessageService {
   private final AtomicInteger kakaoTalkCount = new AtomicInteger(0);
   private final AtomicInteger smsCount = new AtomicInteger(0);
 
-  public Mono<MessageSendResponseDto> sendMessageByAgeGroup(MessageSendRequestDto requestDto) {
-    String ageGroup = requestDto.getAgeGroup();
+  public Mono<ApiResponse<MessageSendResponseDto>> sendMessageByAgeGroup(MessageSendRequestDto requestDto) {
+    AgeGroup ageGroup = requestDto.getAgeGroup();
     String customMessage = requestDto.getCustomMessage();
+
+    log.info("연령대별 메시지 발송 시작 - 연령대: {}, 커스텀 메시지: {}", requestDto.getAgeGroup(), requestDto.getCustomMessage());
 
     AtomicInteger totalProcessed = new AtomicInteger(0);
     AtomicInteger successCount = new AtomicInteger(0);
@@ -47,43 +56,54 @@ public class BulkMessageService {
     kakaoTalkCount.set(0);
     smsCount.set(0);
 
+    Instant startTime = Instant.now();
     return Flux.range(0, Integer.MAX_VALUE)
         .concatMap(pageNum -> loadUserPage(pageNum, ageGroup))
         .takeWhile(users -> !users.isEmpty())
         .flatMapIterable(users -> users)
         .flatMap(user -> sendMessageWithFallback(user, customMessage)
             .doOnNext(success -> {
-              totalProcessed.incrementAndGet();
+              int processed = totalProcessed.incrementAndGet();
               if (success) {
                 successCount.incrementAndGet();
               } else {
                 failureCount.incrementAndGet();
               }
+
+              if (processed % 1000 == 0) {
+                log.info("진행률 - 처리: {}명, 성공: {}명", processed, successCount.get());
+              }
             }),
             CONCURRENT_LIMIT)
         .then(Mono.fromCallable(() -> {
+          Duration duration = Duration.between(startTime, Instant.now());
+
           int total = totalProcessed.get();
           int success = successCount.get();
           int failure = failureCount.get();
           int kakaoCount = kakaoTalkCount.get();
           int smsCountValue = smsCount.get();
-          Double kakaoRate = total > 0 ? (kakaoCount * 100.0) / total : 0.0;
-          Double smsRate = total > 0 ? (smsCountValue * 100.0) / total : 0.0;
-          return MessageSendResponseDto.builder()
-              .message("연령대별 메시지 발송이 완료되었습니다.")
+
+          log.info("메시지 발송 완료 - 총 {}명, 성공 {}명, 실패 {}명, 소요시간 {}초", total, success, failure, duration.getSeconds());
+          log.info("채널별 - 카카오톡: {}명, SMS: {}명", kakaoTalkCount.get(), smsCount.get());
+
+          MessageSendResponseDto responseDto = MessageSendResponseDto.builder()
               .totalUsers(total)
               .successCount(success)
               .failureCount(failure)
-              .ageGroup(ageGroup)
+              .ageGroup(ageGroup.getCode())
               .kakaoTalkCount(kakaoCount)
               .smsCount(smsCountValue)
-              .kakaoTalkRate(kakaoRate)
-              .smsRate(smsRate)
               .build();
-        }));
+          return ApiResponse.success(ApiResponseCode.BULK_MESSAGE_SUCCESS, responseDto);
+        }))
+        .onErrorResume(error -> {
+          log.error("메시지 발송 중 오류 발생: {}", error.getMessage());
+          return Mono.just(ApiResponse.error(ApiResponseCode.MESSAGE_SEND_ERROR, error.getMessage()));
+        });
   }
 
-  private Mono<List<User>> loadUserPage(int pageNum, String ageGroup) {
+  private Mono<List<User>> loadUserPage(int pageNum, AgeGroup ageGroup) {
     return Mono.fromCallable(() -> {
       Pageable pageable = PageRequest.of(pageNum, BATCH_SIZE);
       Page<User> page = userRepository.findAll(pageable);
@@ -93,9 +113,10 @@ public class BulkMessageService {
       List<User> filteredUsers = page.getContent().stream()
           .filter(user -> {
             try {
-              String userAgeGroup = ageCalculator.getAgeGroupFromResidentNumber(user.getResidentNumber());
-              return userAgeGroup.equals(ageGroup);
+              AgeGroup userAgeGroup = ageCalculator.getAgeGroupFromResidentNumber(user.getResidentNumber());
+              return userAgeGroup == ageGroup;
             } catch (Exception e) {
+              log.warn("연령 계산 실패 - 사용자ID: {}", user.getUserId());
               return false;
             }
           })

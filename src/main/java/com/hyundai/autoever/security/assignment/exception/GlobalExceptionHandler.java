@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.hyundai.autoever.security.assignment.domain.dto.response.ApiResponse;
-import com.hyundai.autoever.security.assignment.domain.dto.response.ApiResponseCode;
+import com.hyundai.autoever.security.assignment.enums.ApiResponseCode;
 
 import lombok.extern.slf4j.Slf4j;
 

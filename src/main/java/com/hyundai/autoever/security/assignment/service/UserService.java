@@ -12,6 +12,7 @@ import com.hyundai.autoever.security.assignment.exception.InvalidPasswordExcepti
 import com.hyundai.autoever.security.assignment.exception.UserNotFoundException;
 import com.hyundai.autoever.security.assignment.repository.UserRepository;
 import com.hyundai.autoever.security.assignment.util.JwtUtil;
+import com.hyundai.autoever.security.assignment.util.AddressExtractUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -54,20 +55,20 @@ public class UserService {
 
   private void validateDuplicates(UserRegisterRequestDto requestDto) {
     if (userRepository.existsByUserId(requestDto.getUserId())) {
-      throw new DuplicateAccountException("이미 존재하는 계정입니다.");
+      throw new DuplicateAccountException();
     }
 
     if (userRepository.existsByResidentNumber(requestDto.getResidentNumber())) {
-      throw new DuplicateResidentNumberException("이미 존재하는 주민등록번호입니다.");
+      throw new DuplicateResidentNumberException();
     }
   }
 
   public UserLoginResponseDto login(UserLoginRequestDto requestDto) {
     User user = userRepository.findByUserId(requestDto.getUserId())
-        .orElseThrow(() -> new UserNotFoundException("존재하지 않는 계정입니다."));
+        .orElseThrow(() -> new UserNotFoundException());
 
     if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
-      throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
+      throw new InvalidPasswordException();
     }
 
     String token = jwtUtil.generateToken(user.getUserId());
@@ -79,8 +80,7 @@ public class UserService {
   }
 
   public UserDetailResponseDto getMyInfo(String userId) {
-    User user = userRepository.findByUserId(userId)
-        .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + userId));
+    User user = userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
 
     return UserDetailResponseDto.builder()
         .id(user.getId())
@@ -88,21 +88,7 @@ public class UserService {
         .name(user.getName())
         .residentNumber(user.getResidentNumber())
         .phoneNumber(user.getPhoneNumber())
-        .address(extractAdministrativeDistrict(user.getAddress()))
+        .address(AddressExtractUtil.extractAdministrativeDistrict(user.getAddress()))
         .build();
-  }
-
-  /**
-   * 주소에서 최대 행정구역 단위만 추출합니다.
-   * 공백으로 split하여 첫 번째 요소를 반환합니다.
-   * 예: "서울특별시 강남구 테헤란로 123" -> "서울특별시"
-   */
-  private String extractAdministrativeDistrict(String fullAddress) {
-    if (fullAddress == null || fullAddress.trim().isEmpty()) {
-      return "";
-    }
-
-    String[] addressParts = fullAddress.trim().split("\\s+");
-    return addressParts.length > 0 ? addressParts[0] : fullAddress.trim();
   }
 }

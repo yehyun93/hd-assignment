@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -20,14 +21,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
   private final JwtUtil jwtUtil;
   private final CustomUserDetailsService customUserDetailsService;
+  private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
-  public SecurityConfig(JwtUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
+  public SecurityConfig(JwtUtil jwtUtil, CustomUserDetailsService customUserDetailsService, 
+                       CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
     this.jwtUtil = jwtUtil;
     this.customUserDetailsService = customUserDetailsService;
+    this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
   }
 
   @Bean
@@ -68,8 +73,7 @@ public class SecurityConfig {
           auth.requestMatchers("/h2-console/**").permitAll()
               .requestMatchers("/users/register", "/users/login").permitAll()
               .requestMatchers("/admin/**").hasRole("ADMIN")
-              .requestMatchers("/users/me").authenticated()
-              .anyRequest().permitAll();
+              .anyRequest().authenticated();
         })
         .csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(session -> {
@@ -78,6 +82,9 @@ public class SecurityConfig {
         .httpBasic(basic -> {
         })
         .userDetailsService(userDetailsService)
+        .exceptionHandling(exception -> {
+          exception.authenticationEntryPoint(customAuthenticationEntryPoint);
+        })
         .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
         .headers((headerConfig) -> headerConfig
             .frameOptions((frameOptionsConfig -> frameOptionsConfig.sameOrigin())));

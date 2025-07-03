@@ -1,7 +1,9 @@
 package com.hyundai.autoever.security.assignment.exception;
 
+import com.hyundai.autoever.security.assignment.enums.ApiResponseCode;
+
 public class UserNotFoundException extends RuntimeException {
-  public UserNotFoundException(String message) {
-    super(message);
+  public UserNotFoundException() {
+    super(ApiResponseCode.USER_NOT_FOUND.getMessage());
   }
 }

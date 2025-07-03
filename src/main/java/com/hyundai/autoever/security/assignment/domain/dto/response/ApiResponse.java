@@ -3,6 +3,7 @@ package com.hyundai.autoever.security.assignment.domain.dto.response;
 import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.hyundai.autoever.security.assignment.enums.ApiResponseCode;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,12 @@ public class ApiResponse<T> {
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private Object errors;
 
+  public static <T> ApiResponse<T> success() {
+    return ApiResponse.<T>builder()
+        .success(true)
+        .build();
+  }
+
   public static <T> ApiResponse<T> success(T data) {
     return ApiResponse.<T>builder()
         .success(true)
@@ -48,6 +55,8 @@ public class ApiResponse<T> {
   public static <T> ApiResponse<T> success(ApiResponseCode responseCode, T data) {
     return ApiResponse.<T>builder()
         .success(true)
+        .code(responseCode.getCode())
+        .message(responseCode.getMessage())
         .data(data)
         .build();
   }
@@ -55,6 +64,7 @@ public class ApiResponse<T> {
   public static <T> ApiResponse<T> success(ApiResponseCode responseCode) {
     return ApiResponse.<T>builder()
         .success(true)
+        .code(responseCode.getCode())
         .message(responseCode.getMessage())
         .build();
   }

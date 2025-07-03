@@ -106,11 +106,6 @@ echo "🎉 30대 회원 생성 완료!"
 echo "📊 결과: 성공 ${SUCCESS_COUNT}명, 실패 ${FAILURE_COUNT}명"
 echo "📈 성공률: $((SUCCESS_COUNT * 100 / TOTAL_USERS))%"
 
-# 생성된 30대 회원 확인
-echo ""
-echo "🔍 생성된 30대 회원 확인 중..."
-curl -s -X GET "${BASE_URL}/demo/test-users" | jq '.[] | select(.ageGroup == "30대") | {name, ageGroup, phone}' 2>/dev/null || echo "jq가 설치되지 않아 JSON 파싱을 건너뜁니다."
-
 echo ""
 echo "✅ 스크립트 실행 완료!"
 echo "💡 메시지 발송 테스트: curl -X POST '${BASE_URL}/admin/messages/send-by-age-group' -H 'Content-Type: application/json' -d '{\"ageGroup\":\"30대\",\"customMessage\":\"테스트 메시지\"}'"

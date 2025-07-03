@@ -58,9 +58,6 @@ public class RateLimiter {
     }
   }
 
-  /**
-   * 현재 분을 반환합니다 (YYYYMMDDHHMM 형식)
-   */
   private String getCurrentMinute() {
     return java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
   }

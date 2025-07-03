@@ -1,6 +1,8 @@
 package com.hyundai.autoever.security.assignment.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,6 +18,7 @@ import java.time.Duration;
 import java.util.Base64;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SmsService {
@@ -48,12 +51,18 @@ public class SmsService {
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
         .body(BodyInserters.fromFormData(formData))
         .retrieve()
-        .onStatus(status -> status.is4xxClientError(), response -> response.bodyToMono(String.class)
-            .then(Mono.error(new RuntimeException("SMS API 인증 실패: " + response.statusCode()))))
+        .onStatus(status -> status.is4xxClientError(), response -> {
+          log.warn("SMS API 인증 실패 - 상태코드: {}", response.statusCode().value());
+          return response.bodyToMono(String.class)
+              .then(Mono.error(new RuntimeException("SMS API 인증 실패: " + response.statusCode())));
+        })
         .bodyToMono(Map.class)
         .timeout(Duration.ofSeconds(5))
         .map(response -> response != null && "OK".equals(response.get("result")))
-        .onErrorResume(error -> Mono.just(false));
+        .onErrorResume(error -> {
+          log.error("SMS API 연결 오류: {}", error.getMessage());
+          return Mono.just(false);
+        });
   }
 
   private String createBasicAuth(String username, String password) {

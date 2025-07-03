@@ -1,18 +1,10 @@
-package com.hyundai.autoever.security.assignment.domain.dto.response;
+package com.hyundai.autoever.security.assignment.enums;
 
 public enum ApiResponseCode {
-  // 성공 코드
-  SUCCESS("S001", "요청이 성공적으로 처리되었습니다."),
-
   // 회원가입 관련
   REGISTER_SUCCESS("S002", "회원가입이 완료되었습니다."),
   LOGIN_SUCCESS("S003", "로그인이 완료되었습니다."),
   LOGOUT_SUCCESS("S004", "로그아웃이 완료되었습니다."),
-
-  // 사용자 관리 관련
-  USER_UPDATE_SUCCESS("S005", "사용자 정보가 성공적으로 수정되었습니다."),
-  USER_DELETE_SUCCESS("S006", "사용자가 성공적으로 삭제되었습니다."),
-  USER_INFO_SUCCESS("S007", "사용자 정보를 성공적으로 조회했습니다."),
 
   // 메시지 발송 관련
   MESSAGE_SEND_SUCCESS("S008", "메시지 발송이 완료되었습니다."),

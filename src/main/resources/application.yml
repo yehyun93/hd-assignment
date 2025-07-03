@@ -36,7 +36,6 @@ logging:
 server:
   port: 8080
 
-# External API 설정
 kakao:
   api:
     url: http://localhost:8081

@@ -2,11 +2,11 @@ package com.hyundai.autoever.security.assignment.controller;
 
 import com.hyundai.autoever.security.assignment.domain.dto.request.UserRegisterRequestDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.UserRegisterResponseDto;
+import com.hyundai.autoever.security.assignment.enums.ApiResponseCode;
 import com.hyundai.autoever.security.assignment.domain.dto.request.UserLoginRequestDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.UserLoginResponseDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.UserDetailResponseDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.ApiResponse;
-import com.hyundai.autoever.security.assignment.domain.dto.response.ApiResponseCode;
 import com.hyundai.autoever.security.assignment.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,14 +30,11 @@ public class UserController {
   @PostMapping("/register")
   public ResponseEntity<ApiResponse<UserRegisterResponseDto>> register(
       @Valid @RequestBody UserRegisterRequestDto requestDto) {
-
-    UserRegisterResponseDto response = userService.register(requestDto);
-    return ResponseEntity.ok(ApiResponse.success(response));
+    return ResponseEntity.ok(ApiResponse.success(userService.register(requestDto)));
   }
 
   @PostMapping("/login")
   public ResponseEntity<ApiResponse<UserLoginResponseDto>> login(@Valid @RequestBody UserLoginRequestDto requestDto) {
-
     UserLoginResponseDto response = userService.login(requestDto);
     return ResponseEntity.ok(ApiResponse.success(ApiResponseCode.LOGIN_SUCCESS, response));
   }
@@ -46,7 +43,6 @@ public class UserController {
   @PreAuthorize("isAuthenticated()")
   public ResponseEntity<ApiResponse<UserDetailResponseDto>> getMyInfo(Authentication authentication) {
     String userId = authentication.getName();
-    UserDetailResponseDto response = userService.getMyInfo(userId);
-    return ResponseEntity.ok(ApiResponse.success(ApiResponseCode.USER_INFO_SUCCESS, response));
+    return ResponseEntity.ok(ApiResponse.success(userService.getMyInfo(userId)));
   }
 }
