@@ -1,4 +1,4 @@
-package com.hyundai.autoever.security.assignment.util;
+package com.hyundai.autoever.security.assignment.component;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

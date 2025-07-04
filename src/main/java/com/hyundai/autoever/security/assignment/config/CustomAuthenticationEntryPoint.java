@@ -1,8 +1,8 @@
 package com.hyundai.autoever.security.assignment.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hyundai.autoever.security.assignment.domain.dto.response.ApiResponse;
-import com.hyundai.autoever.security.assignment.enums.ApiResponseCode;
+import com.hyundai.autoever.security.assignment.common.dto.ApiResponse;
+import com.hyundai.autoever.security.assignment.common.enums.ApiResponseCode;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

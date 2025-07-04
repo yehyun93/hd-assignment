@@ -1,6 +1,6 @@
 package com.hyundai.autoever.security.assignment.domain.entity;
 
-import com.hyundai.autoever.security.assignment.config.EncryptedStringConverter;
+import com.hyundai.autoever.security.assignment.domain.converter.EncryptedStringConverter;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

@@ -1,15 +1,16 @@
 package com.hyundai.autoever.security.assignment.controller;
 
+import com.hyundai.autoever.security.assignment.common.dto.ApiResponse;
+import com.hyundai.autoever.security.assignment.common.enums.ApiResponseCode;
 import com.hyundai.autoever.security.assignment.domain.dto.request.MessageSendRequestDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.MessageSendResponseDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.PaginationResponse;
-import com.hyundai.autoever.security.assignment.service.BulkMessageService;
+import com.hyundai.autoever.security.assignment.service.MessageService;
 import com.hyundai.autoever.security.assignment.service.AdminService;
 import com.hyundai.autoever.security.assignment.domain.dto.request.UserUpdateRequestDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.UserListResponseDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.UserResponseDto;
-import com.hyundai.autoever.security.assignment.domain.dto.response.ApiResponse;
-import com.hyundai.autoever.security.assignment.enums.ApiResponseCode;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +25,7 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/admin")
 public class AdminController {
 
-        private final BulkMessageService bulkMessageService;
+        private final MessageService bulkMessageService;
         private final AdminService adminService;
 
         @GetMapping("/users")

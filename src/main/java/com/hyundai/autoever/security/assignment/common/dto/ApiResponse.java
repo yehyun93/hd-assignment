@@ -1,9 +1,9 @@
-package com.hyundai.autoever.security.assignment.domain.dto.response;
+package com.hyundai.autoever.security.assignment.common.dto;
 
 import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.hyundai.autoever.security.assignment.enums.ApiResponseCode;
+import com.hyundai.autoever.security.assignment.common.enums.ApiResponseCode;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

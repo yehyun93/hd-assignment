@@ -2,10 +2,10 @@ package com.hyundai.autoever.security.assignment.controller;
 
 import com.hyundai.autoever.security.assignment.domain.dto.request.UserRegisterRequestDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.UserRegisterResponseDto;
+import com.hyundai.autoever.security.assignment.common.dto.ApiResponse;
 import com.hyundai.autoever.security.assignment.domain.dto.request.UserLoginRequestDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.UserLoginResponseDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.UserDetailResponseDto;
-import com.hyundai.autoever.security.assignment.domain.dto.response.ApiResponse;
 import com.hyundai.autoever.security.assignment.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

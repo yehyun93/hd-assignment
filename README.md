@@ -16,6 +16,45 @@ Spring Boot 기반의 회원 관리 시스템 및 3천만 고객 대상 메시�
 - **Test**: JUnit 5, MockMvc
 - **Monitoring**: Spring Actuator
 
+
+## 📁 프로젝트 구조
+```
+security/
+├── src/
+│   ├── main/
+│   │   ├── java/com/hyundai/autoever/security/assignment/
+│   │   │   ├── common/                # 공통 DTO, 응답 코드 등
+│   │   │   ├── component/             # RateLimiter 등 컴포넌트
+│   │   │   ├── config/                # 보안, JWT, Redis 등 설정
+│   │   │   ├── controller/            
+│   │   │   ├── domain/
+│   │   │   │   ├── converter/         # JPA 컨버터 (암호화 등)
+│   │   │   │   ├── dto/
+│   │   │   │   │   ├── request/       # 요청 DTO
+│   │   │   │   │   └── response/      # 응답 DTO
+│   │   │   │   └── entity/            # JPA 엔티티
+│   │   │   ├── enums/                 
+│   │   │   ├── exception/             
+│   │   │   ├── repository/            
+│   │   │   ├── service/               
+│   │   │   └── util/                  
+│   │   └── resources/
+│   │       ├── application.yml        
+│   │       ├── application-docker.yml 
+│   │       └── ...                    
+│   └── test/
+│       ├── java/com/hyundai/autoever/security/assignment/
+│       │   ├── controller/            
+│       │   ├── service/               
+│       │   └── util/                  
+│       └── resources/
+│           └── application-test.yml   # 테스트 환경 설정
+├── mock-configs/                      # WireMock 설정
+│   ├── kakao/                         # 카카오톡 API 모킹
+│   └── sms/                           # SMS API 모킹
+└── scripts/                           # 테스트용 스크립트
+```
+
 ## 🚀 API 테스트 가이드
 
 ### 1. 프로젝트 클론 및 실행
@@ -42,13 +81,9 @@ docker-compose ps
 
 ### 3. 테스트용 데이터 생성
 ```bash
-# 다양한 연령대의 테스트 사용자 생성 (약 16명)
+# 다양한 연령대의 테스트 사용자 생성 (연령대별 20명)
 chmod +x ./scripts/create-test-users.sh
 ./scripts/create-test-users.sh
-
-# 대량 메시지 테스트용 사용자 생성 (약 1000명)
-chmod +x ./scripts/create-message-test-users.sh
-./scripts/create-message-test-users.sh
 ```
 
 ## 📝 상세 API 가이드
@@ -296,26 +331,6 @@ curl -X POST "http://localhost:8082/sms?phone=010-1234-5678" \
   -H "Authorization: Basic $(echo -n 'autoever:5678' | base64)" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "message=테스트 SMS 메시지"
-```
-
-## 📁 프로젝트 구조
-```
-security/
-├── src/main/java/com.hyundai.autoever.security.assignment/
-│   ├── config/              # 보안 설정, Redis 설정
-│   ├── controller/          # REST API 컨트롤러
-│   ├── service/             # 비즈니스 로직
-│   ├── repository/          # 데이터 접근 계층
-│   ├── domain/              # DTO, Entity
-│   ├── util/                # 유틸리티 클래스
-│   ├── exception/           # 예외 처리
-│   └── enums/               # 열거형
-├── mock-configs/            # WireMock 설정
-│   ├── kakao/               # 카카오톡 API 모킹
-│   └── sms/                 # SMS API 모킹
-├── scripts/                 # 유틸리티 스크립트
-├── docker-compose.yml       # 인프라 구성
-└── README.md
 ```
 
 ## ✨ 구현 완료 기능

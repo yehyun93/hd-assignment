@@ -40,10 +40,6 @@ public class KakaoTalkService {
       .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(1024 * 1024))
       .build();
 
-  /**
-   * 카카오톡 메시지를 발송합니다.
-   * 테스트 모드에서는 설정된 실패율에 따라 인위적 실패 발생
-   */
   public Mono<Boolean> sendMessage(String phone, String message) {
     // 테스트 모드에서만 인위적 실패 적용
     if (testModeEnabled && random.nextInt(100) < failureRate) {

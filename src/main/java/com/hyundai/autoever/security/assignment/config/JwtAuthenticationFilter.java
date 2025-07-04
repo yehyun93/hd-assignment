@@ -25,7 +25,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
     String path = request.getRequestURI();
-    // /admin/** 경로는 JWT 필터 적용 안함 (Basic Auth 전용)
     if (path.startsWith("/admin/")) {
       return true;
     }

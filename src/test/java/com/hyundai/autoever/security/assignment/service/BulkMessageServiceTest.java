@@ -1,12 +1,12 @@
 package com.hyundai.autoever.security.assignment.service;
 
+import com.hyundai.autoever.security.assignment.common.dto.ApiResponse;
+import com.hyundai.autoever.security.assignment.component.RateLimiter;
 import com.hyundai.autoever.security.assignment.domain.dto.request.MessageSendRequestDto;
-import com.hyundai.autoever.security.assignment.domain.dto.response.ApiResponse;
 import com.hyundai.autoever.security.assignment.domain.dto.response.MessageSendResponseDto;
 import com.hyundai.autoever.security.assignment.domain.entity.User;
 import com.hyundai.autoever.security.assignment.repository.UserRepository;
 import com.hyundai.autoever.security.assignment.util.AgeCalculator;
-import com.hyundai.autoever.security.assignment.util.RateLimiter;
 import com.hyundai.autoever.security.assignment.enums.AgeGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +49,7 @@ class BulkMessageServiceTest {
         private AgeCalculator ageCalculator;
 
         @InjectMocks
-        private BulkMessageService bulkMessageService;
+        private MessageService bulkMessageService;
 
         private User user1, user2, user3;
         private MessageSendRequestDto requestDto;

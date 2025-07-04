@@ -5,9 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
-import com.hyundai.autoever.security.assignment.domain.dto.response.ApiResponse;
-import com.hyundai.autoever.security.assignment.enums.ApiResponseCode;
+import com.hyundai.autoever.security.assignment.common.dto.ApiResponse;
+import com.hyundai.autoever.security.assignment.common.enums.ApiResponseCode;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -77,6 +78,22 @@ public class GlobalExceptionHandler {
     log.warn("인증 실패: {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
         .body(ApiResponse.error(ApiResponseCode.UNAUTHORIZED));
+  }
+
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<ApiResponse<Void>> handleIllegalArgument(IllegalArgumentException ex) {
+    log.warn("잘못된 요청(IllegalArgumentException): {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(ApiResponse.error(ApiResponseCode.BAD_REQUEST, ex.getMessage()));
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+    log.warn("요청 본문 파싱 실패(HttpMessageNotReadableException): {}", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(ApiResponse.error(
+            com.hyundai.autoever.security.assignment.common.enums.ApiResponseCode.INVALID_AGE_GROUP,
+            "존재하지 않는 AgeGroup입니다."));
   }
 
   @ExceptionHandler(Exception.class)

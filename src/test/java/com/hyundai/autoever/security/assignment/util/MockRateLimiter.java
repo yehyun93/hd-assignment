@@ -4,6 +4,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import com.hyundai.autoever.security.assignment.component.RateLimiterInterface;
+
 /**
  * 테스트용 Rate Limiter - 항상 허용
  */

@@ -1,4 +1,4 @@
-package com.hyundai.autoever.security.assignment.config;
+package com.hyundai.autoever.security.assignment.domain.converter;
 
 import com.hyundai.autoever.security.assignment.util.CryptoUtil;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,6 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
 
     try {
       String encrypted = cryptoUtil.encrypt(attribute);
-      log.debug("주민번호 암호화 완료");
       return encrypted;
     } catch (Exception e) {
       log.error("DB 저장 시 암호화 실패", e);
@@ -40,7 +39,6 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
 
     try {
       String decrypted = cryptoUtil.decrypt(dbData);
-      log.debug("주민번호 복호화 완료");
       return decrypted;
     } catch (Exception e) {
       log.error("DB 조회 시 복호화 실패", e);

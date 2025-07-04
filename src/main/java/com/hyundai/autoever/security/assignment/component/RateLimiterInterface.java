@@ -1,4 +1,4 @@
-package com.hyundai.autoever.security.assignment.util;
+package com.hyundai.autoever.security.assignment.component;
 
 public interface RateLimiterInterface {
     boolean isKakaoTalkAllowed();

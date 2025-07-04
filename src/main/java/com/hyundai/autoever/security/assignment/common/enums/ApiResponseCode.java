@@ -1,14 +1,12 @@
-package com.hyundai.autoever.security.assignment.enums;
+package com.hyundai.autoever.security.assignment.common.enums;
 
 public enum ApiResponseCode {
   // 회원가입 관련
   REGISTER_SUCCESS("S002", "회원가입이 완료되었습니다."),
   LOGIN_SUCCESS("S003", "로그인이 완료되었습니다."),
-  LOGOUT_SUCCESS("S004", "로그아웃이 완료되었습니다."),
 
   // 메시지 발송 관련
-  MESSAGE_SEND_SUCCESS("S008", "메시지 발송이 완료되었습니다."),
-  BULK_MESSAGE_SUCCESS("S009", "대용량 메시지 발송이 완료되었습니다."),
+  BULK_MESSAGE_SUCCESS("S009", "메시지 발송이 완료되었습니다."),
 
   // 클라이언트 오류 (4xx)
   BAD_REQUEST("C400", "잘못된 요청입니다."),
@@ -20,6 +18,7 @@ public enum ApiResponseCode {
   DUPLICATE_ACCOUNT("C409", "이미 존재하는 계정입니다."),
   DUPLICATE_RESIDENT_NUMBER("C409", "이미 존재하는 주민등록번호입니다."),
   INVALID_PASSWORD("C422", "비밀번호가 일치하지 않습니다."),
+  INVALID_AGE_GROUP("C423", "존재하지 않는 연령대입니다."),
 
   // 서버 오류 (5xx)
   INTERNAL_ERROR("S500", "서버 내부 오류가 발생했습니다."),
@@ -35,7 +34,6 @@ public enum ApiResponseCode {
     this.message = message;
   }
 
-  // 편의 메서드들
   public boolean isSuccess() {
     return this.code.startsWith("S") && !this.code.startsWith("S5");
   }

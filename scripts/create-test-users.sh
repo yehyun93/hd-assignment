@@ -34,8 +34,9 @@ create_users() {
     local birth_year_start=$2
     local birth_year_end=$3
     local success=0
+    local failed_users=()
     
-    echo "${age_group} 사용자 생성 시작..."
+    echo -n "${age_group} 사용자 생성 중..."
     
     for i in $(seq 1 $USERS_PER_AGE); do
         # 해당 연령대 범위에서 랜덤 생년 선택
@@ -61,25 +62,27 @@ create_users() {
         if [ "$response" = "200" ]; then
             success=$((success + 1))
         else
-            # 실패 시 첫 5개만 디버깅 출력
-            if [ $i -le 5 ]; then
-                echo "  실패: $user_id (HTTP: $response) - 주민번호: $resident_number"
-            fi
-        fi
-        
-        # 진행률 표시 (5개마다)
-        if [ $((i % 5)) -eq 0 ]; then
-            echo "  진행: $i/$USERS_PER_AGE (성공: $success)"
+            failed_users+=("$user_id(HTTP:$response)")
         fi
         
         sleep 0.01
     done
     
-    echo "${age_group} 완료: ${success}/${USERS_PER_AGE}명 성공"
+    # 결과 출력
+    if [ $success -eq $USERS_PER_AGE ]; then
+        echo " ✅ 완료: ${success}/${USERS_PER_AGE}명 성공"
+    else
+        echo " ⚠️  완료: ${success}/${USERS_PER_AGE}명 성공"
+        if [ ${#failed_users[@]} -gt 0 ] && [ ${#failed_users[@]} -le 5 ]; then
+            echo "    실패: ${failed_users[*]}"
+        elif [ ${#failed_users[@]} -gt 5 ]; then
+            echo "    실패: ${failed_users[@]:0:3} ... (총 ${#failed_users[@]}개)"
+        fi
+    fi
 }
 
-# 2025년 기준 연령대별 생년 범위
-echo "📅 2025년 기준 연령대별 사용자 생성..."
+echo "📅 연령대별 사용자 생성..."
+echo ""
 
 create_users "teens" 2006 2015      # 10-19세
 create_users "twenties" 1996 2005   # 20-29세  
@@ -91,5 +94,5 @@ create_users "seventies" 1946 1955  # 70-79세
 create_users "over80" 1930 1945     # 80세 이상
 
 echo ""
-echo "종료: 총 생성 완료"
+echo "🎉 총 생성 완료: 연령대별 최대 ${USERS_PER_AGE}명씩 생성"
 echo ""
