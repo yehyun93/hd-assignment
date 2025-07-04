@@ -25,19 +25,23 @@ hd-assignment/
 │   │   ├── java/com/hyundai/autoever/security/assignment/
 │   │   │   ├── common/                # 공통 DTO, 응답 코드 등
 │   │   │   ├── component/             # RateLimiter 등 컴포넌트
-│   │   │   ├── config/                # 보안, JWT, Redis 등 설정
+│   │   │   ├── config/                
 │   │   │   ├── controller/            
 │   │   │   ├── domain/
 │   │   │   │   ├── converter/         # JPA 컨버터 (암호화 등)
 │   │   │   │   ├── dto/
 │   │   │   │   │   ├── request/       # 요청 DTO
 │   │   │   │   │   └── response/      # 응답 DTO
-│   │   │   │   └── entity/            # JPA 엔티티
+│   │   │   │   └── entity/            
 │   │   │   ├── enums/                 
 │   │   │   ├── exception/             
 │   │   │   ├── repository/            
 │   │   │   ├── service/               
-│   │   │   └── util/                  
+│   │   │   ├── util/                  
+│   │   │   └── security/              # 인증/인가 관련 패키지
+│   │   │       ├── filter/            
+│   │   │       ├── handler/           
+│   │   │       └── service/           
 │   │   └── resources/
 │   │       ├── application.yml        
 │   │       ├── application-docker.yml 
