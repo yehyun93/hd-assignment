@@ -215,7 +215,7 @@ Content-Type: application/json
 }
 ```
 
-## 🎯 연령대 코드표
+##  연령대 코드표
 
 | 코드 | 나이 범위 | 한글명 | 주민번호 예시 |
 |------|-----------|--------|---------------|
@@ -229,7 +229,7 @@ Content-Type: application/json
 | SEVENTIES | 70~79세 | 70대 | 45xxxxx~54xxxxx |
 | OVER_80 | 80세 이상 | 80대 이상 | ~44xxxxx |
 
-## 🔥 3천만 고객 메시지 발송 시스템
+## ✅ 3천만 고객 메시지 발송 시스템
 
 ### 핵심 특징
 - **우선순위**: 카카오톡 → SMS Fallback
@@ -333,7 +333,7 @@ curl -X POST "http://localhost:8082/sms?phone=010-1234-5678" \
   -d "message=테스트 SMS 메시지"
 ```
 
-## ✨ 구현 완료 기능
+## 구현 완료 기능
 
 ### 1. 회원 관리 시스템
 - ✅ 회원가입/로그인 (중복 검증)
@@ -353,4 +353,3 @@ curl -X POST "http://localhost:8082/sms?phone=010-1234-5678" \
 - ✅ Docker Compose 기반 서비스 구성
 - ✅ WireMock 기반 외부 API 모킹
 - ✅ Redis 캐시 연동
-- ✅ 포괄적인 테스트 코드
