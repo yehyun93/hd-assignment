@@ -31,7 +31,7 @@ public class HttpLoggingFilter implements Filter {
       String traceId = UUID.randomUUID().toString().substring(0, 8);
 
       MDC.put("traceId", traceId);
-      log.info("[{}][{}][{}][{}][{}] {}", 
+      log.info("[{}][{}][{}][{}]{}", 
           LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")),
           traceId,
           getClientIP(httpRequest),

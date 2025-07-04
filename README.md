@@ -68,7 +68,7 @@ git clone https://github.com/yehyun93/hd-assignment.git
 cd hd-assignment
 
 # 전체 서비스 실행 (한 번에 모든 서비스 시작)
-docker-compose up -d
+docker-compose up -d --build
 
 # 서비스 상태 확인
 docker-compose ps
