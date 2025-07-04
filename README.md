@@ -261,7 +261,7 @@ Content-Type: application/json
 ```bash
 # Rate Limiting 테스트
 for i in {1..10}; do
-  curl -X POST http://localhost:8080/admin/messages/send-by-age-group \
+  curl -X POST http://localhost:8080/admin/messages/send \
     -u admin:1212 \
     -H "Content-Type: application/json" \
     -d '{"ageGroup": "TWENTIES", "customMessage": "테스트 '$i'"}' &
