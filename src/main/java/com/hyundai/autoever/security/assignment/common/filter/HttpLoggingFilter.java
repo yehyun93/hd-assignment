@@ -31,11 +31,11 @@ public class HttpLoggingFilter implements Filter {
       String traceId = UUID.randomUUID().toString().substring(0, 8);
 
       MDC.put("traceId", traceId);
-      log.info("[{}][{}][{}][{}] {}", 
-          traceId,
+      log.info("[{}][{}][{}][{}][{}] {}", 
           LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")),
-          httpRequest.getMethod(), 
+          traceId,
           getClientIP(httpRequest),
+          httpRequest.getMethod(), 
           httpRequest.getRequestURI()
       );
 
