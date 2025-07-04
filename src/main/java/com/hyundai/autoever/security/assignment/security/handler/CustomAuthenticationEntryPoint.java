@@ -1,4 +1,4 @@
-package com.hyundai.autoever.security.assignment.config;
+package com.hyundai.autoever.security.assignment.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hyundai.autoever.security.assignment.common.dto.ApiResponse;

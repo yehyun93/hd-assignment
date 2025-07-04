@@ -1,4 +1,4 @@
-package com.hyundai.autoever.security.assignment.config;
+package com.hyundai.autoever.security.assignment.security.filter;
 
 import com.hyundai.autoever.security.assignment.util.JwtUtil;
 import jakarta.servlet.FilterChain;
