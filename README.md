@@ -196,7 +196,7 @@ Authorization: Basic admin:1212
 
 #### 연령대별 대용량 메시지 발송
 ```bash
-POST /admin/messages/send-by-age-group
+POST /admin/messages/send
 Authorization: Basic admin:1212
 Content-Type: application/json
 
