@@ -95,7 +95,7 @@ public class BulkMessageService {
               .kakaoTalkCount(kakaoCount)
               .smsCount(smsCountValue)
               .build();
-          return ApiResponse.success(ApiResponseCode.BULK_MESSAGE_SUCCESS, responseDto);
+          return ApiResponse.success(responseDto);
         }))
         .onErrorResume(error -> {
           log.error("메시지 발송 중 오류 발생: {}", error.getMessage());

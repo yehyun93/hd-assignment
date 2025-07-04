@@ -1,5 +1,7 @@
 package com.hyundai.autoever.security.assignment.domain.entity;
 
+import com.hyundai.autoever.security.assignment.config.EncryptedStringConverter;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -32,7 +34,8 @@ public class User {
   @NotBlank(message = "성명은 필수입니다")
   private String name;
 
-  @Column(unique = true, nullable = false, length = 13)
+  @Convert(converter = EncryptedStringConverter.class)
+  @Column(name = "resident_number", unique = true, nullable = false, length = 500)
   @Pattern(regexp = "\\d{13}", message = "주민등록번호는 13자리 숫자여야 합니다")
   private String residentNumber;
 

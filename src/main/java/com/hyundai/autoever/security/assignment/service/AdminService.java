@@ -61,6 +61,7 @@ public class AdminService {
         .userId(user.getUserId())
         .name(user.getName())
         .phoneNumber(user.getPhoneNumber())
+        .residentNumber(user.getResidentNumber())
         .address(user.getAddress())
         .build();
   }

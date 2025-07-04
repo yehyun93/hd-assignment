@@ -14,5 +14,6 @@ public class UserListResponseDto {
   private String userId;
   private String name;
   private String phoneNumber;
+  private String residentNumber;
   private String address;
 }

@@ -2,7 +2,6 @@ package com.hyundai.autoever.security.assignment.controller;
 
 import com.hyundai.autoever.security.assignment.domain.dto.request.UserRegisterRequestDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.UserRegisterResponseDto;
-import com.hyundai.autoever.security.assignment.enums.ApiResponseCode;
 import com.hyundai.autoever.security.assignment.domain.dto.request.UserLoginRequestDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.UserLoginResponseDto;
 import com.hyundai.autoever.security.assignment.domain.dto.response.UserDetailResponseDto;
@@ -35,8 +34,7 @@ public class UserController {
 
   @PostMapping("/login")
   public ResponseEntity<ApiResponse<UserLoginResponseDto>> login(@Valid @RequestBody UserLoginRequestDto requestDto) {
-    UserLoginResponseDto response = userService.login(requestDto);
-    return ResponseEntity.ok(ApiResponse.success(ApiResponseCode.LOGIN_SUCCESS, response));
+    return ResponseEntity.ok(ApiResponse.success(userService.login(requestDto)));
   }
 
   @GetMapping("/me")
