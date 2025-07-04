@@ -57,23 +57,13 @@ public class AdminController {
                 return ResponseEntity.ok(ApiResponse.success());
         }
 
-        @PostMapping("/messages/send-by-age-group")
+        @PostMapping("/messages/send")
         @PreAuthorize("hasRole('ADMIN')")
-        public Mono<ResponseEntity<ApiResponse<MessageSendResponseDto>>> sendBulkMessageByAgeGroup(
-                        @RequestBody MessageSendRequestDto requestDto) {
+        public Mono<ResponseEntity<ApiResponse<MessageSendResponseDto>>> sendBulkMessageByAgeGroup(@RequestBody MessageSendRequestDto requestDto) {
                 return bulkMessageService.sendMessageByAgeGroup(requestDto)
-                                .map(ResponseEntity::ok)
+                                .map(res -> ResponseEntity.ok(ApiResponse.success(res.getData())))
                                 .onErrorResume(e -> Mono.just(
                                                 ResponseEntity.status(500).body(ApiResponse.error(
                                                                 ApiResponseCode.MESSAGE_SEND_ERROR, e.getMessage()))));
-        }
-
-        @GetMapping("/messages/progress")
-        @PreAuthorize("hasRole('ADMIN')")
-        public Mono<ResponseEntity<ApiResponse<String>>> getProgressStatus() {
-                return bulkMessageService.getSimpleProgress()
-                                .map(res -> ResponseEntity.ok(ApiResponse.success(res)))
-                                .onErrorReturn(ResponseEntity.status(500)
-                                                .body(ApiResponse.error(ApiResponseCode.INTERNAL_ERROR)));
         }
 }
