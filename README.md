@@ -19,7 +19,7 @@ Spring Boot 기반의 회원 관리 시스템 및 3천만 고객 대상 메시�
 
 ## 📁 프로젝트 구조
 ```
-security/
+hd-assignment/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/hyundai/autoever/security/assignment/
@@ -61,7 +61,7 @@ security/
 ```bash
 # 프로젝트 클론
 git clone https://github.com/yehyun93/hd-assignment.git
-cd security
+cd hd-assignment
 
 # 전체 서비스 실행 (한 번에 모든 서비스 시작)
 docker-compose up -d
