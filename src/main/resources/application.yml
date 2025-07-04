@@ -7,7 +7,7 @@ spring:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
     username: sa
-    password: 
+    password: test1234
 
   jpa:
     hibernate:
@@ -41,6 +41,9 @@ kakao:
     url: http://localhost:8081
     username: autoever
     password: 1234
+    test:
+      enabled: false
+      failure-rate: 0
 
 sms:
   api:

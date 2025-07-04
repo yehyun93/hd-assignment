@@ -3,22 +3,29 @@ spring:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
     username: sa
-    password: 
+    password: test1234  # 메인 설정과 통일
   
   jpa:
     hibernate:
       ddl-auto: create-drop
-    show-sql: true
+    show-sql: false  # 테스트 로그 간소화
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
         dialect: org.hibernate.dialect.H2Dialect
   
   h2:
     console:
-      enabled: true
+      enabled: false  # 테스트에서 비활성화
+
+  # Redis 비활성화 (테스트용)
+  data:
+    redis:
+      repositories:
+        enabled: false
 
 logging:
   level:
-    org.springframework.security: DEBUG
-    com.hyundai.autoever.security.assignment: DEBUG 
+    org.springframework.security: WARN
+    com.hyundai.autoever.security.assignment: INFO
+    root: WARN 

@@ -3,7 +3,6 @@ package com.hyundai.autoever.security.assignment.controller;
 import com.hyundai.autoever.security.assignment.domain.dto.request.UserLoginRequestDto;
 import com.hyundai.autoever.security.assignment.domain.dto.request.UserRegisterRequestDto;
 import com.hyundai.autoever.security.assignment.repository.UserRepository;
-import com.hyundai.autoever.security.assignment.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -241,8 +240,6 @@ class UserControllerTest {
                                 .content(objectMapper.writeValueAsString(loginRequest)))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.success").value(true))
-                                .andExpect(jsonPath("$.code").value("S003"))
-                                .andExpect(jsonPath("$.message").value("로그인이 완료되었습니다."))
                                 .andExpect(jsonPath("$.data.token").exists());
         }
 

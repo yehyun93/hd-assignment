@@ -6,7 +6,7 @@ import com.hyundai.autoever.security.assignment.domain.entity.User;
 import com.hyundai.autoever.security.assignment.enums.AgeGroup;
 import com.hyundai.autoever.security.assignment.repository.UserRepository;
 import com.hyundai.autoever.security.assignment.util.AgeCalculator;
-import com.hyundai.autoever.security.assignment.util.RateLimiter;
+import com.hyundai.autoever.security.assignment.util.RateLimiterInterface;
 import com.hyundai.autoever.security.assignment.domain.dto.response.ApiResponse;
 import com.hyundai.autoever.security.assignment.enums.ApiResponseCode;
 import lombok.RequiredArgsConstructor;
@@ -35,14 +35,13 @@ public class BulkMessageService {
   private final UserRepository userRepository;
   private final KakaoTalkService kakaoTalkService;
   private final SmsService smsService;
-  private final RateLimiter rateLimiter;
+  private final RateLimiterInterface rateLimiter;
   private final AgeCalculator ageCalculator;
 
   private static final int BATCH_SIZE = 100;
-  private static final int CONCURRENT_LIMIT = 5;
+  private static final int CONCURRENT_LIMIT = 2;
 
-  private final AtomicInteger kakaoTalkCount = new AtomicInteger(0);
-  private final AtomicInteger smsCount = new AtomicInteger(0);
+  // 글로벌 카운터 제거 - 각 요청마다 로컬 카운터 사용
 
   public Mono<ApiResponse<MessageSendResponseDto>> sendMessageByAgeGroup(MessageSendRequestDto requestDto) {
     AgeGroup ageGroup = requestDto.getAgeGroup();
@@ -50,18 +49,19 @@ public class BulkMessageService {
 
     log.info("연령대별 메시지 발송 시작 - 연령대: {}, 커스텀 메시지: {}", requestDto.getAgeGroup(), requestDto.getCustomMessage());
 
+    // 각 요청마다 로컬 카운터 생성
     AtomicInteger totalProcessed = new AtomicInteger(0);
     AtomicInteger successCount = new AtomicInteger(0);
     AtomicInteger failureCount = new AtomicInteger(0);
-    kakaoTalkCount.set(0);
-    smsCount.set(0);
+    AtomicInteger kakaoTalkCount = new AtomicInteger(0);
+    AtomicInteger smsCount = new AtomicInteger(0);
 
     Instant startTime = Instant.now();
     return Flux.range(0, Integer.MAX_VALUE)
         .concatMap(pageNum -> loadUserPage(pageNum, ageGroup))
         .takeWhile(users -> !users.isEmpty())
         .flatMapIterable(users -> users)
-        .flatMap(user -> sendMessageWithFallback(user, customMessage)
+        .flatMap(user -> sendMessageWithFallback(user, customMessage, kakaoTalkCount, smsCount)
             .doOnNext(success -> {
               int processed = totalProcessed.incrementAndGet();
               if (success) {
@@ -104,9 +104,12 @@ public class BulkMessageService {
   }
 
   private Mono<List<User>> loadUserPage(int pageNum, AgeGroup ageGroup) {
+
+    log.info("연령대별 사용자 조회 시작 - 연령대: {}", ageGroup);
     return Mono.fromCallable(() -> {
       Pageable pageable = PageRequest.of(pageNum, BATCH_SIZE);
       Page<User> page = userRepository.findAll(pageable);
+      log.info("연령대별 사용자 조회 완료 - 연령대: {}, 페이지: {}, 사용자 수: {}", ageGroup, pageNum, page.getContent().size());
       if (page.isEmpty()) {
         return List.<User>of();
       }
@@ -116,6 +119,7 @@ public class BulkMessageService {
               AgeGroup userAgeGroup = ageCalculator.getAgeGroupFromResidentNumber(user.getResidentNumber());
               return userAgeGroup == ageGroup;
             } catch (Exception e) {
+              e.printStackTrace();
               log.warn("연령 계산 실패 - 사용자ID: {}", user.getUserId());
               return false;
             }
@@ -124,10 +128,10 @@ public class BulkMessageService {
       return filteredUsers;
     })
         .subscribeOn(Schedulers.boundedElastic())
-        .timeout(Duration.ofSeconds(10));
+        .timeout(Duration.ofSeconds(30));
   }
 
-  private Mono<Boolean> sendMessageWithFallback(User user, String customMessage) {
+  private Mono<Boolean> sendMessageWithFallback(User user, String customMessage, AtomicInteger kakaoTalkCount, AtomicInteger smsCount) {
     String message = createMessage(user.getName(), customMessage);
     String phone = user.getPhoneNumber();
     if (rateLimiter.isKakaoTalkAllowed()) {
@@ -137,16 +141,16 @@ public class BulkMessageService {
               kakaoTalkCount.incrementAndGet();
               return Mono.just(true);
             } else {
-              return sendSmsMessage(phone, message);
+              return sendSmsMessage(phone, message, smsCount);
             }
           })
-          .onErrorResume(error -> sendSmsMessage(phone, message));
+          .onErrorResume(error -> sendSmsMessage(phone, message, smsCount));
     } else {
-      return sendSmsMessage(phone, message);
+      return sendSmsMessage(phone, message, smsCount);
     }
   }
 
-  private Mono<Boolean> sendSmsMessage(String phone, String message) {
+  private Mono<Boolean> sendSmsMessage(String phone, String message, AtomicInteger smsCount) {
     if (rateLimiter.isSmsAllowed()) {
       return smsService.sendMessage(phone, message)
           .doOnNext(success -> {

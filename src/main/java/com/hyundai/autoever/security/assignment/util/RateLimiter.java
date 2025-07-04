@@ -6,10 +6,12 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+import org.springframework.context.annotation.Profile;
 
 @Component
 @RequiredArgsConstructor
-public class RateLimiter {
+@Profile("!test")
+public class RateLimiter implements RateLimiterInterface {
 
   private final RedisTemplate<String, String> redisTemplate;
 

@@ -29,6 +29,12 @@ public class KakaoTalkService {
   @Value("${kakao.api.password:1234}")
   private String password;
 
+  @Value("${kakao.api.test.failure-rate:10}")
+  private int failureRate;
+
+  @Value("${kakao.api.test.enabled:true}")
+  private boolean testModeEnabled;
+
   private final Random random = new Random();
   private final WebClient webClient = WebClient.builder()
       .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(1024 * 1024))
@@ -36,15 +42,19 @@ public class KakaoTalkService {
 
   /**
    * 카카오톡 메시지를 발송합니다.
-   * POST http://kakao-mock:8081/kakaotalk-messages
+   * 테스트 모드에서는 설정된 실패율에 따라 인위적 실패 발생
    */
   public Mono<Boolean> sendMessage(String phone, String message) {
-    if (random.nextInt(10) == 0) {
+    // 테스트 모드에서만 인위적 실패 적용
+    if (testModeEnabled && random.nextInt(100) < failureRate) {
+      log.debug("카카오톡 테스트 실패 시뮬레이션 (실패율: {}%)", failureRate);
       return Mono.just(false);
     }
+
     Map<String, String> requestBody = Map.of(
         "phone", phone,
         "message", message);
+        
     return webClient.post()
         .uri(kakaoApiUrl + "/kakaotalk-messages")
         .header(HttpHeaders.AUTHORIZATION, createBasicAuth(username, password))
